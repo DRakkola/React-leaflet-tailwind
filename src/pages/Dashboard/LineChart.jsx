@@ -1,4 +1,4 @@
-import { ResponsiveLine } from "@nivo/line";
+/* import { ResponsiveLine } from "@nivo/line";
 
 const ChartLine = ({ data }) => {
    if (!data){
@@ -160,4 +160,88 @@ return(
 )
 }
 
-export default ChartLine;
+export default ChartLine; */
+
+import { useMonthly } from "@/src/hooks/use-dash";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis,Tooltip } from "recharts";
+
+const getIntroOfPage = (label) => {
+  if (label === 'Jan') {
+    return "January ";
+  }
+  if (label === 'Feb') {
+    return "February ";
+  }
+  if (label === 'Mar') {
+    return "March ";
+  }
+  if (label === 'Apr') {
+    return "April ";
+  }
+  if (label === 'May') {
+    return "May ";
+  }
+  if (label === 'Jun') {
+    return "June ";
+  }
+  if (label === 'Jul') {
+    return "July ";
+  }
+  if (label === 'Aug') {
+    return "August ";
+  }
+  if (label === 'Sep') {
+    return "September ";
+  }
+  if (label === 'Oct') {
+    return "October ";
+  }
+  if (label === 'Nov') {
+    return "November ";
+  }
+  if (label === 'Dec') {
+    return "December ";
+  }
+  
+  
+};
+
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip bg-slate-300 opacity-75">
+        <p className="label">{`${getIntroOfPage(label)} : ${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default function LineChart() {
+  const {data:graphData,isSuccess:GraphDataIsSuccess} = useMonthly()
+  return (
+    GraphDataIsSuccess &&
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={graphData.data}>
+        <XAxis
+          dataKey="name"
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+        />
+        <YAxis
+          stroke="#888888"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+          tickFormatter={(value) => `${value}`}
+        />
+        <Tooltip content={<CustomTooltip />} />
+        <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

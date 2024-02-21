@@ -7,67 +7,72 @@ import MapLayout from "../layouts/MapLayout";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Missions from "../pages/Missions";
-import ListUsers from "../pages/ListUsers";
 import Map from "../pages/Map";
-
 import { renderRoutes } from "./generate-routes";
+import Photo from "../pages/Map/photo";
+import Callback from "./Callback";
+import View from "../pages/stream/View";
+import ScreenRecord from "../pages/stream/ScreenCapture";
 export const routes = [
-{
+  {
     layout: AnonymousLayout,
     routes: [
       {
-        name: 'login',
-        title: 'Login page',
-        component: Login,
-        path: '/login',
+        name: "login",
+        title: "Login page",
+        component: ScreenRecord,
+        path: "/ScreenRecord",
         isPublic: true,
-      }
-    ]
+      },
+      {
+        name: "stream",
+        title: "stream",
+        component: Callback,
+        path: "/callback",
+        isPublic: true,
+      },
+    ],
   },
-{
+  {
     layout: MainLayout,
     routes: [
       {
-        name: 'Dashboard',
-        title: 'Dashboard page',
+        name: "Dashboard",
+        title: "Dashboard page",
         component: Dashboard,
-        path: '/'
+        path: "/",
       },
       {
-        name: 'Missions',
-        title: 'Missions page',
+        name: "Missions",
+        title: "Missions page",
         component: Missions,
-        path: '/Missions'
+        path: "/Missions",
       },
       {
-        name: 'users',
-        title: 'Users',
-        hasSiderLink: true,
-        routes: [
-          {
-            name: 'list-users',
-            title: 'List of users',
-            hasSiderLink: true,
-            component: ListUsers,
-            path: '/users'
-          },
-          
-        ]
-      }
+        name: "Stream",
+        title: "Stream page",
+        component: View,
+        path: "/View",
+      },
     ],
-    
   },
   {
     layout: MapLayout,
     routes: [
       {
-        name: 'Map',
-        title: 'Map page',
+        name: "Map",
+        title: "Map page",
         component: Map,
-        path: '/map'
-      }
-    ]
-  }
+        path: "/map",
+      },
+      {
+        name: "photo",
+        title: "Photo page",
+        component: Photo,
+        path: "/photo",
+      },
+    ],
+  },
 ];
 
 export const Routes = renderRoutes(routes);

@@ -1,5 +1,3 @@
-import { Label } from "@/components/ui/label";
-import { PieChart, Map, List } from "react-feather";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,94 +13,67 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Menu } from "react-feather";
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import mainLogo from "../assets/zxwlbvka.png";
+import View from "../pages/stream/View";
 
 export default function SideBar({ full }) {
   const navigate = useNavigate();
   const handleClick = (route) => {
     navigate(route);
   };
+  const location = useLocation();
+
   if (full) {
     return (
-      <div className="flex flex-col w-1/5 h-full justify-start items-start  px-3 bg-white divide-y space-y-1">
-        <NavigationMenu orientation="vertical" className="flex flex-col justify-start items-start h-full w-full">
+      <nav className="flex flex-col w-1/5 h-full justify-start items-center  px-3 bg-white divide-y space-y-1">
+        <img src={mainLogo} alt="fireSpot" className="w-5/6" />
+        <NavigationMenu
+          orientation="vertical"
+          className="flex flex-col justify-start items-start h-full w-full"
+        >
           <NavigationMenuList className="flex flex-col items-start w-full">
-            <NavigationMenuItem>
-              <a href="/">
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <NavigationMenuItem className="w-full">
+              <Link to="/" className="w-full">
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle() + " w-full"}
+                >
                   Dashboard
                 </NavigationMenuLink>
-              </a>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <a href="/Map">
+              <Link to="/Map">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Map
                 </NavigationMenuLink>
-              </a>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <a href="/Missions">
+              <Link to="/Missions">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Missions
                 </NavigationMenuLink>
-              </a>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <a href="/Missions">
+              <Link to="/View">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Missions
+                  View
                 </NavigationMenuLink>
-              </a>
+              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-
-        {/* <ul className="space-y-2 pb-2 mt-3">
-          <li>
-            <a
-              href="/"
-              className="text-base text-gray-900 font-normal rounded-lg flex items-center p-2 hover:bg-gray-100 group"
-            >
-              <PieChart className="w-6 h-6 text-gray-500 group-hover:text-gray-900 transition duration-75" />
-              <Label className="ml-3">Dashboard</Label>
-            </a>
-          </li>
-          <li>
-            <a
-              href="/Map"
-              className="text-base text-gray-900 font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group "
-            >
-              <Map className="w-6 h-6 text-gray-500 group-hover:text-gray-900 transition duration-75" />
-              <Label className="ml-3 flex-1 whitespace-nowrap">Map</Label>
-              <Label className="bg-gray-200 text-gray-800 ml-3 text-sm font-medium inline-flex items-center justify-center px-2 rounded-full">
-                Pro
-              </Label>
-            </a>
-          </li>
-          <li>
-            <a
-              href="/Missions"
-              className="text-base text-gray-900 font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group "
-            >
-              <List className="w-6 h-6 text-gray-500 group-hover:text-gray-900 transition duration-75" />
-              <Label className="ml-3 flex-1 whitespace-nowrap">Missions</Label>
-            </a>
-          </li>
-        </ul> */}
-      </div>
+      </nav>
     );
   }
   return (

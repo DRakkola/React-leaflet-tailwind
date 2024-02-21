@@ -6,17 +6,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Layers, Image, Navigation, Filter } from "react-feather";
-import { useState} from "react";
+import { useState } from "react";
 
-/* import useLayers from "../../../hooks/use-layers"; */
+import useLayers from "../../../hooks/use-layers";
 
 const Layer_controls = () => {
-  const [PicturesChecked, setPicturesChecked] = useState(false);
-  const [LocationsChecked, setLocationsChecked] = useState(false);
-  /* const {isLocationsShown, isPicturesShown, setIsLocationsShown, setIsPicturesShown} = useLayers((state) => state)
+  /* const [PicturesChecked, setPicturesChecked] = useState(false);
+  const [LocationsChecked, setLocationsChecked] = useState(false); */
+  const {
+    isLocationsShown,
+    isPicturesShown,
+    setIsLocationsShown,
+    setIsPicturesShown,
+  } = useLayers((state) => state);
 
-  
-  return(
+  /*return(
     
     <Dropdown.Details horizontal="left" dataTheme="light" className="mb-3 bg-transparent">
       <Dropdown.Details.Toggle ><Layers/></Dropdown.Details.Toggle>
@@ -38,10 +42,12 @@ const Layer_controls = () => {
         <div className="flex flex-col justify-evenly h-1/6 w-full ">
           <div
             className="flex flex-row justify-between items-center  px-2 py-3 w-full  hover:bg-gray-50 rounded-lg"
-            onClick={() => setPicturesChecked(!PicturesChecked)}
+            onClick={() => {
+              setIsPicturesShown();
+            }}
           >
             <div className=" flex justify-start">
-              <Checkbox id="terms1" checked={PicturesChecked} />
+              <Checkbox id="terms1" checked={isPicturesShown} />
               <label
                 htmlFor="terms1"
                 className="mx-2 text-m font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -53,10 +59,10 @@ const Layer_controls = () => {
           </div>
           <div
             className="flex flex-row justify-between h-auto px-2 py-1 w-full items-center  hover:bg-gray-50 rounded-lg"
-            onClick={() => setLocationsChecked(!LocationsChecked)}
+            onClick={() => setIsLocationsShown()}
           >
             <div className=" flex justify-start ">
-              <Checkbox id="terms2" checked={LocationsChecked} />
+              <Checkbox id="terms2" checked={isLocationsShown} />
               <label
                 htmlFor="terms2"
                 className="mx-2 text-m font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -91,7 +97,7 @@ import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator";
 import { getCurrentDate } from "@/src/utils/GetCurrentDate";
-
+import { Filters as Filter_store } from "@/src/hooks/filter-store";
 const datePicker = (id, date, setDate, label) => {
   return (
     <Popover>
@@ -123,8 +129,27 @@ const datePicker = (id, date, setDate, label) => {
   );
 };
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useDash } from "@/src/hooks/use-dash";
 
 const Filter_controls = () => {
+  const { data: missionsData, isSuccess: MissionIsSuccess } = useDash();
+  const {
+    Mission,
+    setcurrentMission,
+    Drone,
+    setcurrentDrone,
+    From,
+    setFrom,
+    To,
+    setTo,
+  } = Filter_store((state) => state);
   
   const [open, setOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
@@ -137,15 +162,16 @@ const Filter_controls = () => {
     mission_value: "",
     drone_value: "",
   });
-  const [input,setInput] = useState({
+  const [input, setInput] = useState({
     mission_value: "",
     drone_value: "",
   });
   const [date, setDate] = useState(new Date());
   const [range, setRange] = useState({
-    from: new Date((new Date(getCurrentDate('-')))),
-    to:  new Date((new Date(getCurrentDate('-'))))
-  })
+    from: new Date(new Date(getCurrentDate("-"))),
+    to: new Date(new Date(getCurrentDate("-"))),
+  });
+  console.log(Mission, Drone, From, To);
   const statuses = [
     {
       value: "mission",
@@ -165,20 +191,36 @@ const Filter_controls = () => {
     },
   ];
 
-  const resetFilters=()=>{
-    if (Object.values(Filters).every(value => !value)) {
+  const UpdateStore = () => {
+    setcurrentDrone(input["drone_value"]);
+    setcurrentMission(input["mission_value"]);
+    setFrom(range["from"]);
+    setTo(range["to"]);
+  };
+
+  const resetFilters = () => {
+    if (Object.values(Filters).every((value) => !value)) {
       setInput({
-        mission_value: "",
-        drone_value: "",
+        mission_value: null,
+        drone_value: null,
       });
+      setcurrentDrone(null);
+      setcurrentMission(null);
+      setFrom(null);
+      setTo(null);
     }
-  }
-  
+  };
+  var uniqueDrones =[]
+  if(missionsData){ uniqueDrones = Array.from(new Set(missionsData.newest_missions.map(mission => mission.drone)));}
   return (
-    <Popover className>
+    <Popover onOpenChange={resetFilters}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="m-2" size="icon" onClick={resetFilters}>
-          
+        <Button
+          variant="outline"
+          className="m-2"
+          size="icon"
+          onClick={resetFilters}
+        >
           <Filter className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
@@ -236,14 +278,21 @@ const Filter_controls = () => {
               <Label className="mb-1" htmlFor="Mission">
                 Mission Name
               </Label>
-              <Input
-                id="Mission"
-                placeholder="Mission Name"
-                value={input["mission_value"]}
-                onChange={(event) =>
-                  setInput({ ...input, mission_value: event.target.value })
-                }
-              />
+              <Select value={Mission} onValueChange={setcurrentMission}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Mission Name" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value={null} >
+                      None
+                    </SelectItem>
+                  {missionsData.newest_missions.map((mission) => (
+                    <SelectItem value={mission.name} key={mission.id}>
+                      {mission.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
           {Filters["drone"] && (
@@ -251,14 +300,21 @@ const Filter_controls = () => {
               <Label className="mb-1" htmlFor="Drone">
                 Drone
               </Label>
-              <Input
-                id="Drone"
-                placeholder="Drone Name"
-                value={input["drone_value"]}
-                onChange={(event) =>
-                  setInput({ ...input, drone_value: event.target.value })
-                }
-              />
+              <Select value={Drone} onValueChange={setcurrentDrone}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Drone Name" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value={null} >
+                      None
+                    </SelectItem>
+                  {uniqueDrones.map((drone,index) => (
+                    <SelectItem value={drone} key={index}>
+                      {drone}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
           {Filters["start"] && Filters["end"] === false && (
@@ -267,7 +323,8 @@ const Filter_controls = () => {
                 {" "}
                 Start Date{" "}
               </Label>
-              {datePicker("Start", date, setDate, "Start Date")}
+              {datePicker("Start", From, setFrom, "Start Date")}
+              
             </div>
           )}
           {Filters["end"] && Filters["start"] === false && (
@@ -276,7 +333,8 @@ const Filter_controls = () => {
                 {" "}
                 End Date{" "}
               </Label>
-              {datePicker("End", date, setDate, "End Date")}
+              {datePicker("End", To, setTo, "End Date")}
+              
             </div>
           )}
           {Filters["end"] && Filters["start"] && (
@@ -286,7 +344,11 @@ const Filter_controls = () => {
               </Label>
               <DateRangePicker
                 id="Range"
-                onUpdate={(values) => setRange(values.range)}
+                onUpdate={(values) => {
+                  setRange(values.range);
+                  setFrom(values.range.from);
+                  setTo(values.range.to);
+                }}
                 initialDateFrom={range.from}
                 initialDateTo={range.to}
                 align="start"
@@ -300,6 +362,5 @@ const Filter_controls = () => {
     </Popover>
   );
 };
-
 
 export { Layer_controls, Filter_controls };

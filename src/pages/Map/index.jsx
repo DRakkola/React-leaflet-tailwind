@@ -3,16 +3,15 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-  
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { ImageIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import Gallerie from "./galerie";
-import {Map as Map_layer} from "./Map12";
+import { Map as Map_layer } from "./Map12";
 
 const Map = () => {
-    const[panels, setPanels] = useState(false)
+  const [panels, setPanels] = useState(false);
   return (
     <div className="static w-full h-full -z-10">
       <div
@@ -26,16 +25,28 @@ const Map = () => {
           <Filter_controls />
         </div>
         <div>
-         <Button variant="outline" className="m-2" size="icon" onClick={() => setPanels(!panels)}>
+          <Button
+            variant="outline"
+            className="m-2"
+            size="icon"
+            onClick={() => setPanels(!panels)}
+          >
             <ImageIcon className="h-4 w-4" />
-        </Button>
+          </Button>
         </div>
       </div>
       <ResizablePanelGroup direction="vertical" className="w-full h-full">
-        <ResizablePanel><Map_layer/></ResizablePanel>
-        {panels &&(<><ResizableHandle withHandle />
-        <ResizablePanel maxSize="30" defaultSize={30} id="picture-panel"><Gallerie/></ResizablePanel></>)}
-        
+        <ResizablePanel>
+          <Map_layer ispanelOpen={panels} />
+        </ResizablePanel>
+        {panels && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel maxSize="30" defaultSize={30} id="picture-panel">
+              <Gallerie photo={true} />
+            </ResizablePanel>
+          </>
+        )}
       </ResizablePanelGroup>
     </div>
   );
