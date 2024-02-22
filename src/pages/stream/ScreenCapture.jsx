@@ -10,30 +10,6 @@ const ScreenRecord = () => {
   const [timerId, setTimerId] = useState(null);
   const streamId = "test";
   const type = "image/png";
-  const notify = () =>
-    toast("Here is your toast.", {
-      duration: 4000,
-      position: "top-center",
-
-      // Styling
-      style: {},
-      className: "",
-
-      // Custom Icon
-      icon: "👏",
-
-      // Change colors of success/error/loading icon
-      iconTheme: {
-        primary: "#000",
-        secondary: "#fff",
-      },
-
-      // Aria
-      ariaProps: {
-        role: "status",
-        "aria-live": "polite",
-      },
-    });
 
   const intervalIdRef = useRef();
   useEffect(() => {

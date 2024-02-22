@@ -13,7 +13,7 @@ const View = () => {
 
     newWs.onmessage = (event) => {
       const arrayBuffer = event.data;
-      console.log("Received data size:", arrayBuffer.byteLength);
+      //console.log("Received data size:", arrayBuffer.byteLength);
 
       if (arrayBuffer.byteLength === 0) {
         console.error("Received an empty array buffer");
@@ -33,7 +33,7 @@ const View = () => {
 
         if (!firstImageReceived) {
           setFirstImageReceived(true);
-          downloadImage(blob);
+          //downloadImage(blob);
         }
       };
       image.onerror = () => {
