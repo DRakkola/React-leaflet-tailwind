@@ -12,8 +12,9 @@ const ScreenRecord = () => {
   const type = "image/png";
 
   const intervalIdRef = useRef();
+  const wsRef = useRef(null); // Ref to hold WebSocket instance
+
   useEffect(() => {
-    let ws;
     let video;
     let canvas;
 
@@ -30,8 +31,10 @@ const ScreenRecord = () => {
     };
 
     const sendFrames = (stream) => {
-      ws = new WebSocket(`ws://127.0.0.1:80/stream/${streamId}`);
-      const interval = 1000 / 30; // Adjust this to change the frame rate
+      const ws = new WebSocket(`ws://127.0.0.1:80/stream/${streamId}`);
+      wsRef.current = ws; // Store WebSocket instance in ref
+
+      const interval = 1000; // Adjust this to change the frame rate
       canvas = document.createElement("canvas");
       video = document.createElement("video");
       video.srcObject = stream;
@@ -80,27 +83,15 @@ const ScreenRecord = () => {
         stream.getTracks().forEach((track) => track.stop());
       }
       clearInterval(intervalIdRef.current);
-      if (ws) {
-        ws.close();
+      if (wsRef.current) {
+        wsRef.current.send("StreamEnded"); // Send message before closing
+        wsRef.current.close();
       }
       if (timerId) {
         clearInterval(timerId);
         setElapsedTime(0);
       }
     }
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-      clearInterval(intervalIdRef.current);
-      if (ws) {
-        ws.close();
-      }
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    };
   }, [captureInitiated]);
 
   // Function to convert base64 image data to a Blob
