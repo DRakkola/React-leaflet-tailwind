@@ -3,6 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { NotificationsContext } from "./hooks/NotificationProfider";
 import { Routes } from "./routes";
 import { useEffect, useContext } from "react";
+
 const App = () => {
   // Initialize local state for message input
 

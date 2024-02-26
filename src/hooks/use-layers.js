@@ -1,10 +1,15 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 const useLayers = create((set) => ({
   isLocationsShown: false,
   isPicturesShown: false,
-  setIsLocationsShown: () => set((state) => ({ isLocationsShown: !state.isLocationsShown})),
-  setIsPicturesShown: () => set((state) => ({ isPicturesShown: !state.isPicturesShown})),
-}))
+  isLiveShown: false,
 
-export default useLayers
+  setIsLocationsShown: () =>
+    set((state) => ({ isLocationsShown: !state.isLocationsShown })),
+  setIsPicturesShown: () =>
+    set((state) => ({ isPicturesShown: !state.isPicturesShown })),
+  setIsLiveShown: () => set((state) => ({ isLiveShown: !state.isLiveShown })),
+}));
+
+export default useLayers;

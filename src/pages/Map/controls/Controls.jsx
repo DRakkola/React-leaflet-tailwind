@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Layers, Image, Navigation, Filter } from "react-feather";
 import { useState } from "react";
-
+import { useLiveState } from "../../../hooks/use-live";
 import useLayers from "../../../hooks/use-layers";
 
 const Layer_controls = () => {
@@ -18,8 +18,12 @@ const Layer_controls = () => {
     isPicturesShown,
     setIsLocationsShown,
     setIsPicturesShown,
+    isLiveActive,
+    isLiveShown,
+    setIsLiveShown,
   } = useLayers((state) => state);
-
+  const { data: liveState, isSuccess: liveIsSuccess } = useLiveState();
+  console.log(liveState);
   /*return(
     
     <Dropdown.Details horizontal="left" dataTheme="light" className="mb-3 bg-transparent">
@@ -72,6 +76,23 @@ const Layer_controls = () => {
             </div>
             <Navigation />
           </div>
+          {liveIsSuccess && liveState.data === "active" && (
+            <div
+              className="flex flex-row justify-between h-auto px-2 py-1 w-full items-center  hover:bg-gray-50 rounded-lg"
+              onClick={() => setIsLiveShown()}
+            >
+              <div className=" flex justify-start ">
+                <Checkbox id="terms2" checked={isLiveShown} />
+                <label
+                  htmlFor="terms2"
+                  className="mx-2 text-m font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Live
+                </label>
+              </div>
+              <Navigation />
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>
@@ -150,7 +171,7 @@ const Filter_controls = () => {
     To,
     setTo,
   } = Filter_store((state) => state);
-  
+
   const [open, setOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [selectedStatus, setSelectedStatus] = useState(null);
@@ -210,8 +231,12 @@ const Filter_controls = () => {
       setTo(null);
     }
   };
-  var uniqueDrones =[]
-  if(missionsData){ uniqueDrones = Array.from(new Set(missionsData.newest_missions.map(mission => mission.drone)));}
+  var uniqueDrones = [];
+  if (missionsData) {
+    uniqueDrones = Array.from(
+      new Set(missionsData.newest_missions.map((mission) => mission.drone))
+    );
+  }
   return (
     <Popover onOpenChange={resetFilters}>
       <PopoverTrigger asChild>
@@ -253,7 +278,7 @@ const Filter_controls = () => {
                             ...Filters,
                             [value]: !Filters[value],
                           });
-
+                          resetFilters();
                           setOpen(false);
                         }}
                       >
@@ -283,9 +308,7 @@ const Filter_controls = () => {
                   <SelectValue placeholder="Mission Name" />
                 </SelectTrigger>
                 <SelectContent>
-                <SelectItem value={null} >
-                      None
-                    </SelectItem>
+                  <SelectItem value={null}>None</SelectItem>
                   {missionsData.newest_missions.map((mission) => (
                     <SelectItem value={mission.name} key={mission.id}>
                       {mission.name}
@@ -305,10 +328,8 @@ const Filter_controls = () => {
                   <SelectValue placeholder="Drone Name" />
                 </SelectTrigger>
                 <SelectContent>
-                <SelectItem value={null} >
-                      None
-                    </SelectItem>
-                  {uniqueDrones.map((drone,index) => (
+                  <SelectItem value={null}>None</SelectItem>
+                  {uniqueDrones.map((drone, index) => (
                     <SelectItem value={drone} key={index}>
                       {drone}
                     </SelectItem>
@@ -324,7 +345,6 @@ const Filter_controls = () => {
                 Start Date{" "}
               </Label>
               {datePicker("Start", From, setFrom, "Start Date")}
-              
             </div>
           )}
           {Filters["end"] && Filters["start"] === false && (
@@ -334,7 +354,6 @@ const Filter_controls = () => {
                 End Date{" "}
               </Label>
               {datePicker("End", To, setTo, "End Date")}
-              
             </div>
           )}
           {Filters["end"] && Filters["start"] && (

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import backImage from "../../assets/back.jpg";
 import logo from "../../assets/zxwlbvka.png";
 import toast from "react-hot-toast";
+
 const ScreenRecord = () => {
   const [stream, setStream] = useState(null);
   const [captureInitiated, setCaptureInitiated] = useState(false);
